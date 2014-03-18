@@ -1,12 +1,15 @@
 class Sinkable < Particle
-	def gravity(world)
-		b1 = super(world)
+	def waterGravity(world)
 		b2 = false
-		if !b1 && @y > 0 && world.ary[@x][@y - 1].is_a?(Water)
+		if @y > 0 && world.ary[@x][@y - 1].is_a?(Water)
 			@y -= 1
 			b2 = true
 		end
-		b1 || b2
+		b2
+	end
+	def update(world)
+		super(world)
+		waterGravity(world)
 	end
 end
 
@@ -70,7 +73,7 @@ class Water < Particle
 				for xc in range
 					for yc in range
 						x, y = @x + xc, @y + yc
-						allWater = false if @window.valid?(x, y) && !world.ary[x][y].is_a?(Water)
+						allWater = false if !@window.valid?(x, y) || !world.ary[x][y].is_a?(Water)
 					end
 				end
 				@transform = Fish.new(@window, @x, @y) if allWater

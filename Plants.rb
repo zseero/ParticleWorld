@@ -15,7 +15,8 @@ class Grass < Sinkable
 	end
 	def update(world)
 		super(world)
-		if world.ary[@x][@y + 1].real?
+		p = world.ary[@x][@y + 1]
+		if p.real? && !p.is_a?(Animal)
 			@transform = Mud.new(@window, @x, @y)
 		else
 			xs = (@x - 2)..(@x + 2)
@@ -40,7 +41,7 @@ class Trunk < Particle
 		@counter = 0
 		@counterThresh = Random.rand(10...50)
 		@height = Random.rand(5...10)
-		@acceptable = [Air, Trunk, Leaf]
+		@acceptable = [Air, Trunk, Leaf, Animal]
 	end
 	def height(world)
 		i = 0
@@ -49,8 +50,7 @@ class Trunk < Particle
 		end
 		i
 	end
-	def update(world)
-		super(world)
+	def grow(world)
 		if !@acceptable.include?(world.ary[@x][@y + 1].class)
 			@transform = Air.new(@window, @x, @y)
 		elsif world.ary[@x][@y + 1].air?
@@ -77,6 +77,10 @@ class Trunk < Particle
 		end
 		@counter += 1
 	end
+	def update(world)
+		#super(world)
+		grow(world)
+	end
 end
 
 class Leaf < Particle
@@ -85,7 +89,7 @@ class Leaf < Particle
 		@color = 0xff00aa00
 		@counter = 0
 		@counterThresh = Random.rand(10...100)
-		@acceptable = [Air, Leaf]
+		@acceptable = [Air, Leaf, Animal]
 	end
 	def update(world)
 		if !@acceptable.include?(world.ary[@x][@y + 1].class)

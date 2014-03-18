@@ -1,11 +1,15 @@
 class Particle
-	attr_accessor :x, :y, :transform
+	attr_accessor :transform, :behind
 	def initialize(window, x, y)
 		@window = window
 		@x, @y = x, y
 		@color = 0xff8f8f8f
 		@transform = nil
+		@behind = nil
 	end
+
+	def getX; @x; end
+	def getY; @y; end
 
 	def gravity(world)
 		if @y > 0 && world.ary[@x][@y - 1].is_a?(Air)

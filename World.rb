@@ -30,15 +30,25 @@ class World
 	def update
 		for x in 0...@ary.length
 			for y in 0...@ary[x].length
+				#particle = @ary[x][y]
+				#oldX, oldY = particle.getX, particle.getY
+				#particle.update(self)
+				#newParticle = particle.transform
+				#particle = newParticle if newParticle
+				#c = Air
+				#c = Water if particle.is_a?(Aquatic) && particle.swimming
+				#@ary[oldX][oldY] = c.new(@window, oldX, oldY)
+				#@ary[particle.getX][particle.getY] = particle
 				particle = @ary[x][y]
-				oldX, oldY = particle.x, particle.y
+				oldX, oldY = particle.getX, particle.getY
 				particle.update(self)
 				newParticle = particle.transform
 				particle = newParticle if newParticle
-				c = Air
-				c = Water if particle.is_a?(Fish)
-				@ary[oldX][oldY] = c.new(@window, oldX, oldY)
-				@ary[particle.x][particle.y] = particle
+				oldParticle = particle.behind
+				oldParticle = Air.new(@window, oldX, oldY) if oldParticle.nil?
+				@ary[oldX][oldY] = oldParticle
+				particle.behind = @ary[particle.getX][particle.getY]
+				@ary[particle.getX][particle.getY] = particle
 			end
 		end
 	end
