@@ -38,14 +38,14 @@ class Aquatic < Animal
 	end
 	def getDepth(world)
 		i = 1
-		while @window.valid?(@x, @y + i) && world.ary[@x][@y + i].is_a?(Water)
+		while @window.valid?(@x, @y + i) && world.get(@x, @y + i).is_a?(Water)
 			i += 1
 		end
 		i
 	end
 	def getAltitude(world)
 		i = 1
-		while @window.valid?(@x, @y - i) && world.ary[@x][@y - i].is_a?(Water)
+		while @window.valid?(@x, @y - i) && world.get(@x, @y - i).is_a?(Water)
 			i += 1
 		end
 		i
@@ -60,7 +60,7 @@ class Aquatic < Animal
 			@counter = 0
 		end
 		x, y = @x + xc, @y + yc
-		if @window.valid?(x, y) && world.ary[x][y].is_a?(Water)
+		if @window.valid?(x, y) && world.get(x, y).is_a?(Water)
 			@x, @y = x, y
 		end
 		@counter += 1
@@ -80,13 +80,13 @@ class Fish < Aquatic
 	def update(world)
 		super(world)
 		if @window.valid?(@x, @y + 1)
-			p = world.ary[@x][@y + 1]
+			p = world.get(@x, @y + 1)
 			if p.real? && !p.is_a?(Water)
 				#@transform = Water.new(@window, @x, @y)
 			end
 		end
 		if @window.valid?(@x, @y - 1)
-			p = world.ary[@x][@y - 1]
+			p = world.get(@x, @y - 1)
 			if p.is_a?(Water)
 				swim(world)
 			end
@@ -125,7 +125,7 @@ class Frog < Aquatic
 				@y += 1 if @window.valid?(@x, @y + 1)
 				return true
 			else
-				if @canFlyThrough.include?(world.ary[@x][@y - 1].class)
+				if @canFlyThrough.include?(world.get(@x, @y - 1).class)
 					@y -= 1
 				else
 					@jumpDest = nil
@@ -142,8 +142,8 @@ class Frog < Aquatic
 				for yc in (radius * -1)..(radius)
 					x = xc + @x
 					y = yc + @y
-					if @window.valid?(x, y) && world.ary[x][y].is_a?(Grass)
-						nearbyGrass << world.ary[x][y]
+					if @window.valid?(x, y) && world.get(x, y).is_a?(Grass)
+						nearbyGrass << world.get(x, y)
 					end
 				end
 			end
@@ -157,7 +157,7 @@ class Frog < Aquatic
 	end
 	def toLand(world)
 		if @nearestLand
-			@nearestLand = world.ary[@nearestLand.getX][@nearestLand.getY]
+			@nearestLand = world.get(@nearestLand.getX, @nearestLand.getY)
 			if !@nearestLand.is_a?(Grass)
 				@nearestLand = nil
 			else
@@ -172,8 +172,8 @@ class Frog < Aquatic
 					xc = xDif / xDif.abs if xDif != 0
 					yc = yDif / yDif.abs if yDif != 0
 					x, y = @x + xc, @y + yc
-					@x = x if @window.valid?(x, @y) && world.ary[x][@y].is_a?(Water)
-					@y = y if @window.valid?(@x, y) && world.ary[@x][y].is_a?(Water)
+					@x = x if @window.valid?(x, @y) && world.get(x, @y).is_a?(Water)
+					@y = y if @window.valid?(@x, y) && world.get(@x, y).is_a?(Water)
 				end
 			end
 		else

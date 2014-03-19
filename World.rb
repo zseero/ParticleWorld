@@ -1,35 +1,52 @@
 class World
-	attr_accessor :ary, :dimX, :dimY
+	attr_accessor :contents, :dimX, :dimY
 	def initialize(window)
 		@window = window
 		@dimX = @window.dimX
 		@dimY = @window.dimY
-		@ary = makeAirWorld
+		makeAirWorld
 	end
 
 	def makeAirWorld
-		ary = []
+		@contents = []
 		for x in 0...@dimX
-			miniAry = []
+			col = []
 			for y in 0...@dimY
-				miniAry << Air.new(@window, x, y)
+				col << Air.new(@window, x, y)
+				# set x, y, Air.new(@window, x, y)
 			end
-			ary << miniAry
+			@contents << col
 		end
-		ary
 	end
 
 	def each
-		@ary.each do |column|
-			column.each do |particle|
+		# @contents.each do |key, particle|
+		# 	yield(particle)
+		# end
+		@contents.each do |col|
+			col.each do |particle|
 				yield(particle)
 			end
 		end
 	end
 
+	def cToS(x, y)
+		"#{x.to_i}:#{y.to_i}"
+	end
+
+	def set(x, y, val)
+		# @contents[cToS(x, y)] = val
+		@contents[x][y] = val
+	end
+
+	def get(x, y)
+		# @contents[cToS(x, y)]
+		@contents[x][y]
+	end
+
 	def update
-		for x in 0...@ary.length
-			for y in 0...@ary[x].length
+		for x in 0...@dimX
+			for y in 0...@dimY
 				#particle = @ary[x][y]
 				#oldX, oldY = particle.getX, particle.getY
 				#particle.update(self)
@@ -39,16 +56,16 @@ class World
 				#c = Water if particle.is_a?(Aquatic) && particle.swimming
 				#@ary[oldX][oldY] = c.new(@window, oldX, oldY)
 				#@ary[particle.getX][particle.getY] = particle
-				particle = @ary[x][y]
+				particle = get(x, y)
 				oldX, oldY = particle.getX, particle.getY
 				particle.update(self)
 				newParticle = particle.transform
 				particle = newParticle if newParticle
 				oldParticle = particle.behind
 				oldParticle = Air.new(@window, oldX, oldY) if oldParticle.nil?
-				@ary[oldX][oldY] = oldParticle
-				particle.behind = @ary[particle.getX][particle.getY]
-				@ary[particle.getX][particle.getY] = particle
+				set(oldX, oldY, oldParticle)
+				particle.behind = get(particle.getX, particle.getY)
+				set(particle.getX, particle.getY, particle)
 			end
 		end
 	end

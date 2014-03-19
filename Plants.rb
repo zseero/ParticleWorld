@@ -15,7 +15,7 @@ class Grass < Sinkable
 	end
 	def update(world)
 		super(world)
-		p = world.ary[@x][@y + 1]
+		p = world.get(@x, @y + 1)
 		if p.real? && !p.is_a?(Animal)
 			@transform = Mud.new(@window, @x, @y)
 		else
@@ -25,7 +25,7 @@ class Grass < Sinkable
 			for x in xs
 				for y in ys
 					if @window.valid?(x, y)
-						alone = false if world.ary[x][y].is_a?(Trunk)
+						alone = false if world.get(x, y).is_a?(Trunk)
 					end
 				end
 			end
@@ -45,15 +45,15 @@ class Trunk < Particle
 	end
 	def height(world)
 		i = 0
-		while world.ary[@x][@y - i].is_a?(Trunk)
+		while world.get(@x, @y - i).is_a?(Trunk)
 			i += 1
 		end
 		i
 	end
 	def grow(world)
-		if !@acceptable.include?(world.ary[@x][@y + 1].class)
+		if !@acceptable.include?(world.get(@x, @y + 1).class)
 			@transform = Air.new(@window, @x, @y)
-		elsif world.ary[@x][@y + 1].air?
+		elsif world.get(@x, @y + 1).air?
 			if @counter > @counterThresh
 				if height(world) > @height
 					xs = -2..2
@@ -64,13 +64,13 @@ class Trunk < Particle
 								x = @x + ax
 								y = @y + ay
 								if @window.valid?(x, y)
-									world.ary[x][y] = Leaf.new(@window, x, y)
+									world.set(x, y, Leaf.new(@window, x, y))
 								end
 							end
 						end
 					end
 				else
-					world.ary[@x][@y + 1] = Trunk.new(@window, @x, @y + 1)
+					world.set(@x, @y + 1, Trunk.new(@window, @x, @y + 1))
 				end
 				@counter = 0
 			end
@@ -92,7 +92,7 @@ class Leaf < Particle
 		@acceptable = [Air, Leaf, Animal]
 	end
 	def update(world)
-		if !@acceptable.include?(world.ary[@x][@y + 1].class)
+		if !@acceptable.include?(world.get(@x, @y + 1).class)
 			@transform = Air.new(@window, @x, @y)
 		end
 	end

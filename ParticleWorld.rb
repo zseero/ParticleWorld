@@ -24,8 +24,8 @@ class Window < Gosu::Window
   end
 
   def pixPaint(c, x, y)
-  	if valid?(x, y) && (@world.ary[x][y].air? || c.name == 'Air')
-  		@world.ary[x][y] = c.new(self, x, y)
+  	if valid?(x, y) && (@world.get(x, y).air? || c.name == 'Air')
+  		@world.set(x, y, c.new(self, x, y))
   	end
   end
 

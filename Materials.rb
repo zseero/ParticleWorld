@@ -1,7 +1,7 @@
 class Sinkable < Particle
 	def waterGravity(world)
 		b2 = false
-		if @y > 0 && world.ary[@x][@y - 1].is_a?(Water)
+		if @y > 0 && world.get(@x, @y - 1).is_a?(Water)
 			@y -= 1
 			b2 = true
 		end
@@ -30,7 +30,7 @@ class Dirt < Sinkable
 			for x in xs
 				for y in ys
 					if @window.valid?(x, y)
-						@transform = Mud.new(@window, @x, @y) if world.ary[x][y].is_a?(Water) || world.ary[x][y].is_a?(Mud)
+						@transform = Mud.new(@window, @x, @y) if world.get(x, y).is_a?(Water) || world.get(x, y).is_a?(Mud)
 					end
 				end
 			end
@@ -54,10 +54,10 @@ class Water < Particle
 		@makeAFishCounterMax = Random.rand(40..60)#Random.rand(200..400)
 	end
 	def spill(world)
-		if @window.valid?(@x, @y) && world.ary[@x][@y - 1].is_a?(Water)
+		if @window.valid?(@x, @y) && world.get(@x, @y - 1).is_a?(Water)
 			xs = [@x - 1, @x + 1]
 			for x in xs.shuffle
-				if @window.valid?(x, @y) && world.ary[x][@y].is_a?(Air)
+				if @window.valid?(x, @y) && world.get(x, @y).is_a?(Air)
 					@x += x - @x
 					return true
 				end
@@ -73,7 +73,7 @@ class Water < Particle
 				for xc in range
 					for yc in range
 						x, y = @x + xc, @y + yc
-						allWater = false if !@window.valid?(x, y) || !world.ary[x][y].is_a?(Water)
+						allWater = false if !@window.valid?(x, y) || !world.get(x, y).is_a?(Water)
 					end
 				end
 				@transform = Fish.new(@window, @x, @y) if allWater
@@ -107,6 +107,6 @@ class Mud < Sinkable
 	end
 	def update(world)
 		super(world)
-		toGrass if @window.valid?(@x, @y + 1) && world.ary[@x][@y + 1].air?
+		toGrass if @window.valid?(@x, @y + 1) && world.get(@x, @y + 1).air?
 	end
 end

@@ -12,7 +12,7 @@ class Particle
 	def getY; @y; end
 
 	def gravity(world)
-		if @y > 0 && world.ary[@x][@y - 1].is_a?(Air)
+		if @y > 0 && world.get(@x, @y - 1).is_a?(Air)
 			@y -= 1
 			true
 		else
